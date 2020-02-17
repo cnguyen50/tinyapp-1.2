@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/cnguyen50/tinyapp-1.2/issues"
   },
-  "homepage": "https://github.com/cnguyen50/tinyapp-1.2#readme"
+  "homepage": "https://github.com/cnguyen50/tinyapp-1.2#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
