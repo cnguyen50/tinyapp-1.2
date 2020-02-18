@@ -26,10 +26,21 @@ const generateRandomString = function() {
     return result;
 };
 
+
+// redirect after form submission but not https//
 app.post("/urls", (req, res) => {
-    console.log(req.body);  // Log the POST request body to the console
-    res.send("Ok");         // Respond with 'Ok' (we will replace this)
+    let shortURL = generateRandomString();
+    urlDatabase[shortURL] = `http://${req.body.longURL}`;
+    res.redirect(`/urls/${shortURL}`);
 });
+
+
+// redirects to actual website 
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+});
+  
 
 //urlsDatabase pairs on the browser
 app.get("/urls.json", (req, res) => {
@@ -56,18 +67,7 @@ app.get("/urls", (req, res) => {
 });
 
 
-//Hello World on the browser
-app.get("/hello", (req, res) => {
-    res.send("<html><body>Hello <b>World</b></body></html>\n");
-});  
-
-
-//Hello! on browser
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-
+//printed on terminal
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
