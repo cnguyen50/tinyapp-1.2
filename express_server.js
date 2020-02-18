@@ -23,6 +23,11 @@ const generateRandomString = function() {
     return result;
 };
 
+// edits url and redirects after edit submission
+app.post("/urls/:shortURL", (req, res) => {
+    urlDatabase[req.params.shortURL] = `http://${req.body.newURL}`;
+    res.redirect("/urls")
+});
 
 // redirect after form submission
 app.post("/urls", (req, res) => {
@@ -31,10 +36,12 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${shortURL}`);
 });
 
+
+
 // delete url and redirect to /urls
 app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
-    res.redirect("/urls")
+    res.redirect("/urls");
 })
 
 
