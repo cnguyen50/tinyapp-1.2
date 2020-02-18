@@ -4,8 +4,6 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
-
-//setting up EJS template engine
 app.set("view engine", "ejs");
 
 
@@ -13,7 +11,6 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
 
 
 const generateRandomString = function() {
@@ -27,12 +24,18 @@ const generateRandomString = function() {
 };
 
 
-// redirect after form submission but not https//
+// redirect after form submission
 app.post("/urls", (req, res) => {
     let shortURL = generateRandomString();
     urlDatabase[shortURL] = `http://${req.body.longURL}`;
     res.redirect(`/urls/${shortURL}`);
 });
+
+// delete url and redirect to /urls
+app.post("/urls/:shortURL/delete", (req, res) => {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls")
+})
 
 
 // redirects to actual website 
@@ -41,12 +44,6 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
 });
   
-
-//urlsDatabase pairs on the browser
-app.get("/urls.json", (req, res) => {
-    res.json(urlDatabase);
-  });
-
 
 //rendered Create new TnyURL
 app.get("/urls/new", (req, res) => {
