@@ -14,18 +14,36 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
+
+const generateRandomString = function() {
+    let result = "";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let charactersLength = chars.length;
+    for (let i = 1; i < 7; i++) {
+        result += chars.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+};
+
+app.post("/urls", (req, res) => {
+    console.log(req.body);  // Log the POST request body to the console
+    res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
+
 //urlsDatabase pairs on the browser
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
   });
 
 
+//rendered Create new TnyURL
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
 
 
-  //TinyURL: longURL shortURL: shortURL
+//rendered TinyURL: longURL shortURL: shortURL
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
