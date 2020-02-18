@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
@@ -36,6 +38,13 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${shortURL}`);
 });
 
+
+//sets a cookie username and redirects to browser
+app.post("/login", (req, res) => {
+    let username = req.body.login;
+    res.cookie('username', username);
+    res.redirect("/urls");
+});
 
 
 // delete url and redirect to /urls
