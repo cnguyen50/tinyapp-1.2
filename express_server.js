@@ -39,10 +39,16 @@ app.post("/urls", (req, res) => {
 });
 
 
-//sets a cookie username and redirects to browser
+//sets a cookie username and redirects to /urls
 app.post("/login", (req, res) => {
-    let username = req.body.login;
+    let username = req.body.username
     res.cookie('username', username);
+    res.redirect("/urls");
+});
+
+// clears username cookies and redirects to /urls
+app.post("/logout", (req, res) => {
+    res.clearCookie('username');
     res.redirect("/urls");
 });
 
@@ -69,13 +75,13 @@ app.get("/urls/new", (req, res) => {
 
 //rendered TinyURL: longURL shortURL: shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
 //short/long urls with stylesheet 
 app.get("/urls", (req, res) => {
-    let templateVars = { urls : urlDatabase };
+    let templateVars = { urls : urlDatabase, username: req.cookies["username"] };
     res.render("urls_index", templateVars);
 });
 
