@@ -8,6 +8,18 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -31,13 +43,24 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect("/urls")
 });
 
+// delete url and redirect to /urls
+app.post("/urls/:shortURL/delete", (req, res) => {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+})
+
+// redirects to actual website 
+app.get("/u/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+});
+
 // redirect after form submission
 app.post("/urls", (req, res) => {
     let shortURL = generateRandomString();
     urlDatabase[shortURL] = `http://${req.body.longURL}`;
     res.redirect(`/urls/${shortURL}`);
 });
-
 
 //sets a cookie username and redirects to /urls
 app.post("/login", (req, res) => {
@@ -52,25 +75,41 @@ app.post("/logout", (req, res) => {
     res.redirect("/urls");
 });
 
-
-// delete url and redirect to /urls
-app.post("/urls/:shortURL/delete", (req, res) => {
-    delete urlDatabase[req.params.shortURL];
-    res.redirect("/urls");
-})
+app.post("/register", (req, res) => {
+    let newUserID = generateRandomString();
 
 
-// redirects to actual website 
-app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
+
+    if (req.body.email && req.body.password) {
+        users[newUserID] = { 
+            id: req.body.id,
+            email: req.body.email,
+            password: req.body.password };
+ 
+        res.cookie("user_id", newUserID);
+        console.log(req.body.password)
+        res.redirect("/urls");
+    } else {
+        res.status(400);
+        res.send("Empty email and password field");
+    }
 });
-  
 
-//rendered Create new TnyURL
+  
+//rendered Create new TinyURL
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
+
+//renders register page
+app.get("/register", (req, res) => {
+    res.render("urls_register");
+});
+
+
+// app.get("/login", (req, res) => {
+//     res.render("urls_login");
+// });
 
 
 //rendered TinyURL: longURL shortURL: shortURL
@@ -84,7 +123,6 @@ app.get("/urls", (req, res) => {
     let templateVars = { urls : urlDatabase, username: req.cookies["username"] };
     res.render("urls_index", templateVars);
 });
-
 
 //printed on terminal
 app.listen(PORT, () => {
