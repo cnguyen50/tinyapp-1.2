@@ -26,6 +26,14 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const checkEmail = function(email, ) {
+    for (let id in users) {
+        if (users[id].email === email) {
+            return users[id];
+        }
+    }
+    return false;
+};
 
 const generateRandomString = function() {
     let result = "";
@@ -62,11 +70,19 @@ app.post("/urls", (req, res) => {
     res.redirect(`/urls/${shortURL}`);
 });
 
-//sets a cookie username and redirects to /urls
+//sets a cookie to userID for new user 
 app.post("/login", (req, res) => {
-    let username = req.body.username
-    res.cookie('username', username);
-    res.redirect("/urls");
+    let newEmail = req.body.email;
+    let user = checkEmail(newEmail);
+
+        if (!user) {
+            res.status(403).send("Emails do not match");
+        } else if (user.password !== req.body.password ) {
+            res.status(403).send("Passwords do not match");
+        } else {
+            res.cookie("user_id", user.id);
+            res.redirect("/urls");
+        }
 });
 
 // clears username cookies and redirects to /urls
@@ -77,17 +93,14 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
     let newUserID = generateRandomString();
-
-
-
     if (req.body.email && req.body.password) {
         users[newUserID] = { 
             id: req.body.id,
             email: req.body.email,
             password: req.body.password };
  
-        res.cookie("user_id", newUserID);
-        console.log(req.body.password)
+        res.cookie("user_id", req.body.email);
+        console.log(req.body.email)
         res.redirect("/urls");
     } else {
         res.status(400);
@@ -106,21 +119,21 @@ app.get("/register", (req, res) => {
     res.render("urls_register");
 });
 
-
-// app.get("/login", (req, res) => {
-//     res.render("urls_login");
-// });
+//renders login page
+app.get("/login", (req, res) => {
+    res.render("urls_login");
+});
 
 
 //rendered TinyURL: longURL shortURL: shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["user_id"] };
   res.render("urls_show", templateVars);
 });
 
 //short/long urls with stylesheet 
 app.get("/urls", (req, res) => {
-    let templateVars = { urls : urlDatabase, username: req.cookies["username"] };
+    let templateVars = { urls : urlDatabase, username: req.cookies["user_id"] };
     res.render("urls_index", templateVars);
 });
 
