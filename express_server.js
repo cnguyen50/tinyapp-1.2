@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -12,6 +13,9 @@ app.set("view engine", "ejs");
 //   "b2xVn2": "http://www.lighthouselabs.ca",
 //   "9sm5xK": "http://www.google.com"
 // };
+
+const password = "purple-monkey-dinosaur"; // found in the req.params object
+const hashedPassword = bcrypt.hashSync(password, 10);
 
 const urlDatabase = {
     b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
