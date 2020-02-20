@@ -9,4 +9,4 @@ const checkEmail = function(email, database) {
 
 
 
-module.exports =  checkEmail;
+module.exports = {checkEmail};

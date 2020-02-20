@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { checkEmail } = require('../helpers.js');
+const { checkEmail } = require('../helpers');
 
 const testUsers = {
   "userRandomID": {
@@ -15,10 +15,18 @@ const testUsers = {
   }
 };
 
-describe('getUserByEmail', function() {
-  it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", users)
-    const expectedOutput = "userRandomID";
-    // Write your assert statement here
+describe('checkEmail', function() {
+    it('should return true valid email', () => {
+      const user = checkEmail("user@example.com", testUsers);
+      const expected = "userRandomID";
+      assert.deepEqual(user.id, expected);
+    });
+  
+    it('should return undefined with an invaild email', () => {
+      const user = checkEmail("user1234@example.com", testUsers)
+      const expected = undefined;
+      assert.deepEqual(user, expected);
+    });
+  
   });
-});
+  
