@@ -14,8 +14,6 @@ app.set("view engine", "ejs");
 //   "9sm5xK": "http://www.google.com"
 // };
 
-const password = "purple-monkey-dinosaur"; // found in the req.params object
-const hashedPassword = bcrypt.hashSync(password, 10);
 
 const urlDatabase = {
     b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
@@ -101,13 +99,17 @@ app.post("/login", (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     let user = checkEmail(email);
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    console.log("test at else:", password)
+    console.log("test for hashed", hashedPassword)
 
     if (email === "" || password === "") {
         res.status(403).send("Enter valid fields please");
     } else {
         if (!user) {
             res.status(403).send("Emails do not match");
-        } else if (user.password !== password ) {
+        }
+        if (!bcrypt.compareSync(password, hashedPassword)) {
             res.status(403).send("Passwords do not match");
         } else {
             res.cookie("user_id", user.id);
@@ -182,10 +184,7 @@ app.get("/urls/:shortURL", (req, res) => {
 //short/long urls with stylesheet 
 app.get("/urls", (req, res) => {
     let userID = req.cookies["user_id"];
-    console.log(userID, ":", req.cookies)
     let newURLs = urlsForUser(userID);
-    console.log("newURLs", newURLs)
-    console.log("urlDatabase", urlDatabase)
     let templateVars = {
         urls : newURLs,
         user_id: users[userID] };
