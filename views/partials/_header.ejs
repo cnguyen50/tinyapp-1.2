@@ -11,13 +11,15 @@
         </div>
       </div>
 
-      <% if (typeof username === 'undefined') { %>
-          <form class="form-inline" method="POST" action="/login">
-            <input class="form-control" type="text" name="username" placeholder="Username" style="width: 250px; margin: 1em">
-          <button class="btn btn-outline-dark" type="submit">Login</button>
-          </form>
+      <% if (typeof user_id === 'undefined') { %>
+          <div class="form-inline my-2 my-lg-0" id="navbarNavAltMarkup">
+              <div class="navbar-nav">
+                <strong> <a class="nav-item nav-link" href="/login">Login</a></strong>
+                <strong> <a class="nav-item nav-link" href="/register">Register</a></strong>
+              </div>
+            </div>
         <% } else { %>
-          <label for="username">Logged In As:<%= username %></label>
+          <label for="user_id">Logged In As: <%= user_id.email %></label>
           <a class="nav-item nav-link" href="/logout"></a>
           <form method="POST" action="/logout">
           <button class="btn btn-outline-dark" type="submit">Logout</button>
