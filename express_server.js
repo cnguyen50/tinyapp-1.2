@@ -1,21 +1,18 @@
 const express = require("express");
-const app = express();
-const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const checkEmail = require('./helpers.js');
+const app = express();
+const PORT = 8080;
 
-// const cookieParser = require("cookie-parser");
-// app.use(cookieParser());
 
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
     name: 'session',
     keys: ["key1"],
 }));
-
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.set("view engine", "ejs");
 
 
 const urlDatabase = {
@@ -23,19 +20,7 @@ const urlDatabase = {
     i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
-
-const users = { 
-    "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-};
+const users = {};
 
 const urlsForUser = function(id) {
     let match = {};
@@ -48,14 +33,6 @@ const urlsForUser = function(id) {
     return match;
 };
 
-const checkEmail = function(email) {
-    for (let id in users) {
-        if (users[id].email === email) {
-            return users[id];
-        }
-    }
-    return undefined;
-};
 
 const generateRandomString = function() {
     let result = "";
