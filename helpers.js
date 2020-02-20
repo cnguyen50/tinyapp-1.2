@@ -1,10 +1,10 @@
 const checkEmail = function(email, database) {
-    for (let id in database) {
-        if (database[id].email === email) {
-            return database[id];
-        }
+  for (let id in database) {
+    if (database[id].email === email) {
+      return database[id];
     }
-    return undefined;
+  }
+  return undefined;
 };
 
 
