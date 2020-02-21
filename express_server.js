@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { checkEmail } = require('./helpers.js');
+const { checkEmail,urlsForUser, generateRandomString } = require('./helpers.js');
 const app = express();
 const PORT = 8080;
 
@@ -17,28 +17,6 @@ app.use(cookieSession({
 const users = {};
 
 const urlDatabase = {};
-
-
-const urlsForUser = function(id) {
-  let match = {};
-  for (const key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      match[key] = urlDatabase[key].longURL;
-    }
-  }
-  return match;
-};
-
-
-const generateRandomString = function() {
-  let result = "";
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let charactersLength = chars.length;
-  for (let i = 1; i < 7; i++) {
-    result += chars.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
 
 
 app.post("/urls/:shortURL", (req, res) => {
@@ -162,7 +140,7 @@ app.get("/urls", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    urls : urlsForUser(req.session.user_id),
+    urls : urlsForUser(req.session.user_id, urlDatabase),
     user_id: users[req.session.user_id]
   };
   res.render("urls_index", templateVars);
