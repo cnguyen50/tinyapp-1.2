@@ -1,3 +1,4 @@
+//returns email if it exists in the database
 const checkEmail = function(email, database) {
   for (let id in database) {
     if (database[id].email === email) {
@@ -7,6 +8,7 @@ const checkEmail = function(email, database) {
   return undefined;
 };
 
+//returns urls for individual users
 const urlsForUser = function(id, database) {
   let match = {};
   for (const key in database) {
@@ -17,7 +19,7 @@ const urlsForUser = function(id, database) {
   return match;
 };
 
-
+//creates a random string for shortURL
 const generateRandomString = function() {
   let result = "";
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
