@@ -22,7 +22,7 @@ const urlDatabase = {};
 app.post("/urls/:shortURL", (req, res) => {
   let users = req.session.user_id;
   urlDatabase[req.params.shortURL] = {
-    longURL: `http://${req.body.newURL}`,
+    longURL: req.body.newURL,
     userID:  users
   };
   res.redirect("/urls");
@@ -40,7 +40,7 @@ app.post("/urls", (req, res) => {
   let users = req.session.user_id;
 
   urlDatabase[shortURL] = {
-    longURL: `http://${req.body.longURL}`,
+    longURL: req.body.longURL,
     userID:  users
   };
   res.redirect(`/urls/${shortURL}`);
