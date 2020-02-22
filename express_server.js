@@ -39,6 +39,11 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let users = req.session.user_id;
 
+  if(!users) {
+    res.status(400).send("Access denied, unable to perform action");
+    res.redirect("/login");
+  }
+
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID:  users
@@ -129,11 +134,25 @@ app.get("/", (req, res) => {
 
 //renders tinyURL, shortURL and edit button
 app.get("/urls/:shortURL", (req, res) => {
+
+  if (!req.session.user_id) {
+    res.status(400).send("Need to Login to edit");
+  }
+
+  if (!urlDatabase[req.params.shortURL]) {
+    res.status(400).send("URL doesnt exists in the database");
+  }
+
+  if(req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+    res.status(400).send("Cannot edit this URL")
+  }
+
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user_id: users[req.session.user_id]
   };
+
   res.render("urls_show", templateVars);
 });
 
