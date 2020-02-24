@@ -21,11 +21,17 @@ const urlDatabase = {};
 //allows user to edit URLS
 app.post("/urls/:shortURL", (req, res) => {
   let users = req.session.user_id;
-  urlDatabase[req.params.shortURL] = {
-    longURL: req.body.newURL,
-    userID:  users
-  };
-  res.redirect("/urls");
+
+  if (!users) {
+    res.status(400).send("Need to login for access");
+  } else {
+
+    urlDatabase[req.params.shortURL] = {
+      longURL: req.body.newURL,
+      userID:  users
+    };
+    res.redirect("/urls");
+  }
 });
 
 //deletes longurl 
@@ -42,13 +48,15 @@ app.post("/urls", (req, res) => {
   if(!users) {
     res.status(400).send("Access denied, unable to perform action");
     res.redirect("/login");
+  } else {
+    
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID:  users
+    };
+    res.redirect(`/urls/${shortURL}`);
   }
 
-  urlDatabase[shortURL] = {
-    longURL: req.body.longURL,
-    userID:  users
-  };
-  res.redirect(`/urls/${shortURL}`);
 });
 
 //checks cookie and password if matchs then req prev session
@@ -59,6 +67,7 @@ app.post("/login", (req, res) => {
 
   if (!user) {
     res.status(403).send("Email isnt registered");
+    res.redirect("/register");
   } else if (!bcrypt.compareSync(req.body.password, users[user.id].password)) {
     res.status(403).send("Passwords do not match");
   } else {
@@ -70,7 +79,7 @@ app.post("/login", (req, res) => {
 //clears cookies and redirects to /urls
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 //creates new userID and hashes passwrod and redirects to /urls
@@ -158,6 +167,9 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //renders urls page 
 app.get("/urls", (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  }
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
@@ -171,3 +183,4 @@ app.get("/urls", (req, res) => {
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
 });
+
