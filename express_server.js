@@ -169,14 +169,18 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
+  } else {
+    
+    let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL],
+      urls : urlsForUser(req.session.user_id, urlDatabase),
+      user_id: users[req.session.user_id]
+    };
+    res.render("urls_index", templateVars);
+    
   }
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
-    urls : urlsForUser(req.session.user_id, urlDatabase),
-    user_id: users[req.session.user_id]
-  };
-  res.render("urls_index", templateVars);
+    
 });
 
 //msg on terminal
