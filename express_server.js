@@ -34,7 +34,7 @@ app.post("/urls/:shortURL", (req, res) => {
   }
 });
 
-//deletes longurl 
+//deletes longurl
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
@@ -45,7 +45,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let users = req.session.user_id;
 
-  if(!users) {
+  if (!users) {
     res.status(400).send("Access denied, unable to perform action");
     res.redirect("/login");
   } else {
@@ -109,7 +109,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
   
-//able to create new 
+//able to create new
 app.get("/urls/new", (req, res) => {
   let userID = req.session["user_id"];
   let templateVars = { user_id: users[userID] };
@@ -152,8 +152,8 @@ app.get("/urls/:shortURL", (req, res) => {
     res.status(400).send("URL doesnt exists in the database");
   }
 
-  if(req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
-    res.status(400).send("Cannot edit this URL")
+  if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+    res.status(400).send("Cannot edit this URL");
   }
 
   let templateVars = {
@@ -165,7 +165,7 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-//renders urls page 
+//renders urls page
 app.get("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.redirect("/login");
